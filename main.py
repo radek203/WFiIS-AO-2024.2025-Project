@@ -1,9 +1,10 @@
 import cv2
 
+from config import config
 from paper_utils import get_largest_contour, get_approx_polygon, get_warped_perspective
 
 # Initialize the camera (0 is usually the default camera)
-camera = cv2.VideoCapture(0)
+camera = cv2.VideoCapture(config["camera"])
 
 # Check if the camera opened successfully
 if not camera.isOpened():

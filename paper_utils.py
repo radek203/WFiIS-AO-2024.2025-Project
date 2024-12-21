@@ -1,6 +1,9 @@
 import cv2
 import numpy as np
 
+from config import config
+
+
 def get_largest_contour(frame):
     # Convert the frame to grayscale
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -9,7 +12,7 @@ def get_largest_contour(frame):
     _, otsu = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
     # Apply Canny edge detection
-    edges = cv2.Canny(otsu, 50, 100, apertureSize=5)
+    edges = cv2.Canny(otsu, config["canny-min"], config["canny-max"], apertureSize=config["canny-aperture"])
 
     # Display the Canny edge detection
     cv2.imshow('Canny Edge Detection', edges)
@@ -22,7 +25,7 @@ def get_largest_contour(frame):
 
 
 def get_approx_polygon(largest_contour):
-    epsilon = 0.02 * cv2.arcLength(largest_contour, True)
+    epsilon = config["approx-epsilon"] * cv2.arcLength(largest_contour, True)
     approx = cv2.approxPolyDP(largest_contour, epsilon, True)
 
     # Check if the approximated polygon has (hasn't) 4 points
