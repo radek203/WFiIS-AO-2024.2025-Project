@@ -6,9 +6,11 @@ from config import config
 
 def get_largest_contour(frame):
     # Convert the frame to grayscale
+    # https://www.dynamsoft.com/blog/insights/image-processing/image-processing-101-color-space-conversion/
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
     # Apply Otsu's thresholding
+    # https://pl.wikipedia.org/wiki/Metoda_Otsu
     _, otsu = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
     # Apply Canny edge detection
@@ -20,6 +22,8 @@ def get_largest_contour(frame):
 
     # Find contours
     # https://medium.com/analytics-vidhya/opencv-findcontours-detailed-guide-692ee19eeb18
+    # cv2.RETR_EXTERNAL - Retrieves only the outermost contours, ignoring nested ones.
+    # cv2.CHAIN_APPROX_SIMPLE - Simplifies contours by storing only essential points, reducing memory usage.
     contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     # Find the largest contour by area
@@ -53,8 +57,8 @@ def get_approx_polygon(largest_contour):
 
 def get_warped_perspective(frame, rect):
     # Define the width and height of the new perspective image
-    width = int(max(np.linalg.norm(rect[2] - rect[3]), np.linalg.norm(rect[1] - rect[0]))) # Largest distance between points (bottom-right and bottom-left, top-right and top-left)
-    height = int(max(np.linalg.norm(rect[1] - rect[2]), np.linalg.norm(rect[0] - rect[3]))) # Largest distance between points (top-right and bottom-right, top-left and bottom-left)
+    width = int(max(np.linalg.norm(rect[2] - rect[3]), np.linalg.norm(rect[1] - rect[0]))) # Largest norm distance between points (bottom-right and bottom-left, top-right and top-left)
+    height = int(max(np.linalg.norm(rect[1] - rect[2]), np.linalg.norm(rect[0] - rect[3]))) # Largest norm distance between points (top-right and bottom-right, top-left and bottom-left)
 
     print("Width: ", width, "Height: ", height)
 
