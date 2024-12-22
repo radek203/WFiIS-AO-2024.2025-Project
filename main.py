@@ -33,6 +33,7 @@ def main():
             # Approximate the contour to a polygon
             approx, rect = get_approx_polygon(largest_contour)
             if rect is not None:
+                # Get the warped perspective
                 warped = get_warped_perspective(frame, rect)
 
                 # Draw the polygon and corners on the original frame
