@@ -19,8 +19,8 @@ def get_largest_contour(frame, get_main_page = True):
     edges = cv2.Canny(otsu, config["canny-min"], config["canny-max"], apertureSize=config["canny-aperture"])
 
     # Display the Canny edge detection
-    cv2.imshow('Canny Edge Detection', edges)
-
+    if not get_main_page:
+        cv2.imshow('Canny Edge Detection', edges)
 
     # Find contours
     contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
