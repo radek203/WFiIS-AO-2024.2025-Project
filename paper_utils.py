@@ -92,8 +92,8 @@ def get_object_size(points):
     boundingbox_size = []
     if len(points) == 4:
         x_a = abs(points[1][0][0] - points[0][0][0])
-        y_b = abs(points[1][0][1] - points[0][0][1])
-        boundingbox_size.append((x_a, y_b))
+        y_a = abs(points[1][0][1] - points[0][0][1])
+        boundingbox_size.append((x_a, y_a))
         x_b = abs(points[3][0][0] - points[0][0][0])
         y_b = abs(points[0][0][1] - points[3][0][1])
         boundingbox_size.append((x_b, y_b))
@@ -101,3 +101,40 @@ def get_object_size(points):
     # Return a properties to compute a height and width of the object
     # Under index 0 it keeps a properties to compute width and under index 1 height
     return boundingbox_size
+
+def get_papre_size_in_mm():
+    return 210, 297
+
+def get_measurments_real_unit(rect, points):
+    a=int(max(np.linalg.norm(rect[2] - rect[3]), np.linalg.norm(rect[1] - rect[0])))
+    b=int(max(np.linalg.norm(rect[1] - rect[2]), np.linalg.norm(rect[0] - rect[3])))
+    paper_width_in_pixels= min(a,b)
+    paper_height_in_pixels = max(a,b)
+
+    print("--------------------------------------------------------------------------")
+    print(f"paper w in px: {paper_width_in_pixels}, paper h in px: {paper_height_in_pixels}\n")
+
+    paper_width_in_mm, paper_height_in_mm = get_papre_size_in_mm()
+
+    print(f"paper w in mm: {paper_width_in_mm}, paper h in mm: {paper_height_in_mm}\n")
+
+    scale_long_edge = paper_width_in_mm / paper_width_in_pixels
+    scale_short_edge = paper_height_in_mm / paper_height_in_pixels
+
+    print(f"paper scale long: {scale_long_edge}, paper scale short: {scale_short_edge}\n")
+
+    object_in_pixels = get_object_size(points)
+
+    object_width_in_mm = object_height_in_mm = 0
+    
+    if a>b:
+        object_width_in_mm = ((object_in_pixels[0][0] * scale_long_edge)**2 + (object_in_pixels[0][1] * scale_short_edge)**2)**0.5
+        object_height_in_mm = ((object_in_pixels[1][0] * scale_long_edge)**2 + (object_in_pixels[1][1] * scale_short_edge)**2)**0.5
+    else:
+        object_width_in_mm = ((object_in_pixels[0][0] * scale_short_edge)**2 + (object_in_pixels[0][1] * scale_long_edge)**2)**0.5
+        object_height_in_mm = ((object_in_pixels[1][0] * scale_short_edge)**2 + (object_in_pixels[1][1] * scale_long_edge)**2)**0.5
+    
+    print(f"object w in px: {(object_in_pixels[0][0]**2 + object_in_pixels[0][1]**2)**0.5}, object h in px: {(object_in_pixels[1][0]**2 + object_in_pixels[1][1]**2)**0.5}\n")
+    print(f"object w in mm: {object_width_in_mm}, object h in mm: {object_height_in_mm}\n")
+
+    return object_width_in_mm, object_height_in_mm

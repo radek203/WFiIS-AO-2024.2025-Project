@@ -1,7 +1,7 @@
 import cv2
 
 from config import config
-from paper_utils import get_largest_contour, get_approx_polygon, get_warped_perspective, get_object_size
+from paper_utils import get_largest_contour, get_approx_polygon, get_warped_perspective, get_object_size, get_measurments_real_unit
 
 
 def main():
@@ -55,6 +55,7 @@ def main():
                                 for point in approx_polygon:
                                     cv2.circle(warped, point[0], 10, (0, 0, 255), -1)
                                 print("object size: {}".format(get_object_size(approx_polygon)))
+                                print("object real size: {}".format(get_measurments_real_unit(rect, approx_polygon)))
 
                 # Show the warped perspective
                 cv2.imshow('Warped Perspective', warped)
