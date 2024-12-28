@@ -1,7 +1,7 @@
 import cv2
 
 from config import config
-from paper_utils import get_largest_contour, get_approx_polygon, get_warped_perspective
+from paper_utils import get_largest_contour, get_approx_polygon, get_warped_perspective, get_object_size
 
 
 def main():
@@ -43,9 +43,21 @@ def main():
 
                 # Show the original frame with the polygon and corners
                 cv2.imshow('Original Frame with Polygon', frame)
+
+                # Detect object on warped perspective
+                object_contours = get_largest_contour(warped,False)
+                for object_contour in object_contours:
+                    if object_contour is not None:
+                        approx_polygon, rect_object= get_approx_polygon(object_contour)
+                        if rect_object is not None:
+                            cv2.drawContours(warped, [approx_polygon], -1, (0, 255, 0), 3)
+                            if approx_polygon is not None:
+                                for point in approx_polygon:
+                                    cv2.circle(warped, point[0], 10, (0, 0, 255), -1)
+                                print("object size: {}".format(get_object_size(approx_polygon)))
+
                 # Show the warped perspective
                 cv2.imshow('Warped Perspective', warped)
-
         # Exit when the user presses the 'ESC' key
         if cv2.waitKey(1) & 0xFF == 27:
             break

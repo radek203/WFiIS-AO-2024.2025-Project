@@ -4,7 +4,7 @@ import numpy as np
 from config import config
 
 
-def get_largest_contour(frame):
+def get_largest_contour(frame, get_main_page = True):
     # Convert the frame to grayscale
     # https://www.dynamsoft.com/blog/insights/image-processing/image-processing-101-color-space-conversion/
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -12,13 +12,18 @@ def get_largest_contour(frame):
     # Apply Otsu's thresholding
     # https://pl.wikipedia.org/wiki/Metoda_Otsu
     _, otsu = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+    kernel = np.ones((10,10),np.uint8)
+    cv2.morphologyEx(otsu, cv2.MORPH_DILATE, kernel)
+    kernel = np.ones((10, 10), np.uint8)
+    cv2.morphologyEx(otsu, cv2.MORPH_CLOSE,kernel)
 
     # Apply Canny edge detection
     # https://towardsdatascience.com/canny-edge-detection-step-by-step-in-python-computer-vision-b49c3a2d8123
     edges = cv2.Canny(otsu, config["canny-min"], config["canny-max"], apertureSize=config["canny-aperture"])
 
     # Display the Canny edge detection
-    cv2.imshow('Canny Edge Detection', edges)
+    if not get_main_page:
+        cv2.imshow('Canny Edge Detection', edges)
 
     # Find contours
     # https://medium.com/analytics-vidhya/opencv-findcontours-detailed-guide-692ee19eeb18
@@ -26,8 +31,13 @@ def get_largest_contour(frame):
     # cv2.CHAIN_APPROX_SIMPLE - Simplifies contours by storing only essential points, reducing memory usage.
     contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
+    if get_main_page:
     # Find the largest contour by area
-    return max(contours, key=cv2.contourArea, default=None)
+        return max(contours, key=cv2.contourArea, default=None)
+    else:
+    # Find contours of objects
+        return [contour for contour in contours if cv2.contourArea(contour) > config["min-area"]]
+
 
 
 def get_approx_polygon(largest_contour):
@@ -60,7 +70,7 @@ def get_warped_perspective(frame, rect):
     width = int(max(np.linalg.norm(rect[2] - rect[3]), np.linalg.norm(rect[1] - rect[0]))) # Largest norm distance between points (bottom-right and bottom-left, top-right and top-left)
     height = int(max(np.linalg.norm(rect[1] - rect[2]), np.linalg.norm(rect[0] - rect[3]))) # Largest norm distance between points (top-right and bottom-right, top-left and bottom-left)
 
-    print("Width: ", width, "Height: ", height)
+    # print("Width: ", width, "Height: ", height)
 
     # Destination points for the perspective transform
     dst = np.array([
@@ -76,3 +86,18 @@ def get_warped_perspective(frame, rect):
 
     # Apply the perspective warp
     return cv2.warpPerspective(frame, matrix, (width, height))
+
+
+def get_object_size(points):
+    boundingbox_size = []
+    if len(points) == 4:
+        x_a = abs(points[1][0][0] - points[0][0][0])
+        y_b = abs(points[1][0][1] - points[0][0][1])
+        boundingbox_size.append((x_a, y_b))
+        x_b = abs(points[3][0][0] - points[0][0][0])
+        y_b = abs(points[0][0][1] - points[3][0][1])
+        boundingbox_size.append((x_b, y_b))
+
+    # Return a properties to compute a height and width of the object
+    # Under index 0 it keeps a properties to compute width and under index 1 height
+    return boundingbox_size
