@@ -5,3 +5,6 @@ config = {
     **default_envs,
     **dotenv_values(".env")
 }
+
+# To get value of selected size of paper
+selected_option = None

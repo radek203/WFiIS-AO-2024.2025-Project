@@ -48,9 +48,6 @@ def show_frame():
     label.configure(image=imgtk)
     label.after(10, show_frame)
 
-def close_app():
-    camera.release()
-    root.destroy()
 
 # Initialize the camera (0 is usually the default camera) 
 camera = cv2.VideoCapture(config["camera"])
@@ -63,7 +60,7 @@ else:
 
 # Create Tkinter window
 root = tk.Tk()
-root.title("OpenCV z Tkinter")
+root.title("Mierzenie obiektów na kartce")
 
 # Create label to display the frame
 label = tk.Label(root)
@@ -71,13 +68,11 @@ label.pack()
 
 # Create dropdown menu
 options = ["A3", "A4", "A5"]
-selected_option = tk.StringVar()
-dropdown = ttk.Combobox(root, textvariable=selected_option, values=options)
+config.selected_option = tk.StringVar()
+config.selected_option.set("A4") # Default option
+dropdown = ttk.Combobox(root, textvariable=config.selected_option, values=options)
 dropdown.pack()
 
-# Create close button
-close_button = tk.Button(root, text="Zamknij", command=close_app)
-close_button.pack()
 
 # Start displaying frames
 show_frame()

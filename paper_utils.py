@@ -103,7 +103,16 @@ def get_object_size(points):
     return boundingbox_size
 
 def get_papre_size_in_mm():
-    return 210, 297
+    selected_value = config.selected_option.get()
+    if selected_value == "A4":
+        return 210, 297 
+    elif selected_value == "A5":
+        return 148, 210 
+    elif selected_value == "A3":    
+        return 297, 420
+    else:
+        print("Error: Paper size not selected.")
+        return None, None
 
 def get_measurments_real_unit(rect, points):
     a=int(max(np.linalg.norm(rect[2] - rect[3]), np.linalg.norm(rect[1] - rect[0])))
