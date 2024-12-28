@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-from config import config
+from config import config, paper_option
 
 
 def get_largest_contour(frame, get_main_page = True):
@@ -103,7 +103,8 @@ def get_object_size(points):
     return boundingbox_size
 
 def get_papre_size_in_mm():
-    selected_value = config.selected_option.get()
+    selected_value = paper_option
+    print(f"Selected paper size: {selected_value}")
     if selected_value == "A4":
         return 210, 297 
     elif selected_value == "A5":

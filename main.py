@@ -2,7 +2,7 @@ import cv2
 import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk
-from config import config
+from config import config, paper_option
 from paper_utils import get_largest_contour, get_approx_polygon, get_warped_perspective, get_object_size, get_measurments_real_unit
 
 def show_frame():
@@ -68,10 +68,20 @@ label.pack()
 
 # Create dropdown menu
 options = ["A3", "A4", "A5"]
-config.selected_option = tk.StringVar()
-config.selected_option.set("A4") # Default option
-dropdown = ttk.Combobox(root, textvariable=config.selected_option, values=options)
+selected_option = tk.StringVar()
+selected_option.set("A4") # Default option
+paper_option = selected_option.get()
+dropdown = ttk.Combobox(root, textvariable=selected_option, values=options)
 dropdown.pack()
+
+def update_selected_option(event):
+    global paper_option
+    paper_option = selected_option.get()
+    config.paper_option = paper_option
+
+# Bind the function to the dropdown menu
+dropdown.bind("<<ComboboxSelected>>", update_selected_option)
+
 
 
 # Start displaying frames

@@ -7,4 +7,4 @@ config = {
 }
 
 # To get value of selected size of paper
-selected_option = None
+paper_option = None
