@@ -69,7 +69,6 @@ root.title("OpenCV z Tkinter")
 label = tk.Label(root)
 label.pack()
 
-<<<<<<< HEAD
 # Create dropdown menu
 options = ["A3", "A4", "A5"]
 selected_option = tk.StringVar()
@@ -79,29 +78,6 @@ dropdown.pack()
 # Create close button
 close_button = tk.Button(root, text="Zamknij", command=close_app)
 close_button.pack()
-=======
-                # Show the original frame with the polygon and corners
-                cv2.imshow('Original Frame with Polygon', frame)
-
-                # Detect object on warped perspective
-                object_contours = get_largest_contour(warped,False)
-                for object_contour in object_contours:
-                    if object_contour is not None:
-                        approx_polygon, rect_object= get_approx_polygon(object_contour)
-                        if rect_object is not None:
-                            cv2.drawContours(warped, [approx_polygon], -1, (0, 255, 0), 3)
-                            if approx_polygon is not None:
-                                for point in approx_polygon:
-                                    cv2.circle(warped, point[0], 10, (0, 0, 255), -1)
-                                print("object size: {}".format(get_object_size(approx_polygon)))
-                                print("object real size: {}".format(get_measurments_real_unit(rect, approx_polygon)))
-
-                # Show the warped perspective
-                cv2.imshow('Warped Perspective', warped)
-        # Exit when the user presses the 'ESC' key
-        if cv2.waitKey(1) & 0xFF == 27:
-            break
->>>>>>> Measurement_real_units
 
 # Start displaying frames
 show_frame()
