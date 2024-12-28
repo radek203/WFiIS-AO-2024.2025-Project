@@ -6,10 +6,10 @@ from config import config
 from paper_utils import get_largest_contour, get_approx_polygon, get_warped_perspective, get_object_size, get_measurments_real_unit
 
 def show_frame():
-	# Read a frame
+    # Read a frame
     ret, frame = camera.read()
-	
-	# Check if the frame was read correctly
+    
+    # Check if the frame was read correctly
     if not ret:
         print("Error: Could not read frame.")
         return
@@ -17,19 +17,19 @@ def show_frame():
     largest_contour = get_largest_contour(frame)
 
     if largest_contour is not None:
-		# Approximate the contour to a polygon
+        # Approximate the contour to a polygon
         approx, rect = get_approx_polygon(largest_contour)
-		
+        
         if rect is not None:
-			# Get the warped perspective
+            # Get the warped perspective
             warped = get_warped_perspective(frame, rect)
-			
-			# Draw the polygon and corners on the original frame
+            
+            # Draw the polygon and corners on the original frame
             cv2.drawContours(frame, [approx], -1, (0, 255, 0), 3)
             for point in approx:
                 cv2.circle(frame, point[0], 10, (0, 0, 255), -1)
-				
-			# Detect object on warped perspective
+                
+            # Detect object on warped perspective
             object_contours = get_largest_contour(warped, False)
             for object_contour in object_contours:
                 if object_contour is not None:
