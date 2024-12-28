@@ -5,7 +5,7 @@ from paper_utils import get_largest_contour, get_approx_polygon, get_warped_pers
 
 
 def main():
-    # Initialize the camera (0 is usually the default camera)
+    # Initialize the camera (0 is usually the default camera) 
     camera = cv2.VideoCapture(config["camera"])
 
     # Check if the camera opened successfully
