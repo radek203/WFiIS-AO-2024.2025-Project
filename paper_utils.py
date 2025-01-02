@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-from config import config, paper_option
+from config import config
 
 
 def get_largest_contour(frame, get_main_page = True):
@@ -22,8 +22,8 @@ def get_largest_contour(frame, get_main_page = True):
     edges = cv2.Canny(otsu, config["canny-min"], config["canny-max"], apertureSize=config["canny-aperture"])
 
     # Display the Canny edge detection
-    if not get_main_page:
-        cv2.imshow('Canny Edge Detection', edges)
+    #if not get_main_page:
+    #    cv2.imshow('Canny Edge Detection', edges)
 
     # Find contours
     # https://medium.com/analytics-vidhya/opencv-findcontours-detailed-guide-692ee19eeb18
@@ -102,7 +102,7 @@ def get_object_size(points):
     # Under index 0 it keeps a properties to compute width and under index 1 height
     return boundingbox_size
 
-def get_papre_size_in_mm():
+def get_papre_size_in_mm(paper_option):
     selected_value = paper_option
     print(f"Selected paper size: {selected_value}")
     if selected_value == "A4":
@@ -115,7 +115,7 @@ def get_papre_size_in_mm():
         print("Error: Paper size not selected.")
         return None, None
 
-def get_measurments_real_unit(rect, points):
+def get_measurments_real_unit(rect, points, paper_option="A4"):
     a=int(max(np.linalg.norm(rect[2] - rect[3]), np.linalg.norm(rect[1] - rect[0])))
     b=int(max(np.linalg.norm(rect[1] - rect[2]), np.linalg.norm(rect[0] - rect[3])))
     paper_width_in_pixels= min(a,b)
@@ -124,12 +124,12 @@ def get_measurments_real_unit(rect, points):
     print("--------------------------------------------------------------------------")
     print(f"paper w in px: {paper_width_in_pixels}, paper h in px: {paper_height_in_pixels}\n")
 
-    paper_width_in_mm, paper_height_in_mm = get_papre_size_in_mm()
+    paper_width_in_mm, paper_height_in_mm = get_papre_size_in_mm(paper_option)
 
     print(f"paper w in mm: {paper_width_in_mm}, paper h in mm: {paper_height_in_mm}\n")
 
-    scale_long_edge = paper_width_in_mm / paper_width_in_pixels
-    scale_short_edge = paper_height_in_mm / paper_height_in_pixels
+    scale_long_edge = paper_height_in_mm / paper_height_in_pixels
+    scale_short_edge = paper_width_in_mm / paper_width_in_pixels
 
     print(f"paper scale long: {scale_long_edge}, paper scale short: {scale_short_edge}\n")
 

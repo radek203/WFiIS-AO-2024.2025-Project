@@ -2,7 +2,7 @@ import cv2
 import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk
-from config import config, paper_option
+from config import config
 from paper_utils import get_largest_contour, get_approx_polygon, get_warped_perspective, get_object_size, get_measurments_real_unit
 
 def show_frame():
@@ -39,7 +39,8 @@ def show_frame():
                         for point in approx_polygon:
                             cv2.circle(warped, point[0], 10, (0, 0, 255), -1)
                         print("object size: {}".format(get_object_size(approx_polygon)))
-                        print("object real size: {}".format(get_measurments_real_unit(rect, approx_polygon)))
+                        object_size_x, object_size_y = get_measurments_real_unit(rect, approx_polygon, dropdown.get())
+                        print(f"object real size: {object_size_x}, {object_size_y}")
 
     frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     img = Image.fromarray(frame)
@@ -70,23 +71,12 @@ label.pack()
 options = ["A3", "A4", "A5"]
 selected_option = tk.StringVar()
 selected_option.set("A4") # Default option
-paper_option = selected_option.get()
+
 dropdown = ttk.Combobox(root, textvariable=selected_option, values=options)
 dropdown.pack()
-
-def update_selected_option(event):
-    global paper_option
-    paper_option = selected_option.get()
-    config.paper_option = paper_option
-
-# Bind the function to the dropdown menu
-dropdown.bind("<<ComboboxSelected>>", update_selected_option)
-
-
 
 # Start displaying frames
 show_frame()
 
 # Start Tkinter main loop
 root.mainloop()
-
