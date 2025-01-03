@@ -88,6 +88,37 @@ def get_warped_perspective(frame, rect):
     return cv2.warpPerspective(frame, matrix, (width, height))
 
 
+def get_original_coordinates(cords,rect):
+    width = int(max(np.linalg.norm(rect[2] - rect[3]), np.linalg.norm(rect[1] - rect[0])))
+    height = int(max(np.linalg.norm(rect[1] - rect[2]), np.linalg.norm(rect[0] - rect[3])))
+    dst = np.array([
+        [0, 0],
+        [width - 1, 0],
+        [width - 1, height - 1],
+        [0, height - 1]
+    ], dtype="float32")
+    cords = np.array([point[0] for point in cords])
+
+    # Compute the perspective transform matrix and its inverse
+    matrix = cv2.getPerspectiveTransform(rect, dst)
+    inverse_matrix = np.linalg.inv(matrix)
+
+    # Convert warped coordinates to homogeneous coordinates
+    warped_cords = np.column_stack((cords, np.ones(len(cords))))
+
+    # Apply the inverse transformation
+    original_cords = np.dot(inverse_matrix, warped_cords.T).T
+
+    # Normalize to Cartesian coordinates
+    original_cords = original_cords[:,:2]/original_cords[:,2][:,np.newaxis]
+
+    # Conversion the data to the required shape
+    original_cords = np.array(original_cords,dtype=np.int32)
+    formated_cords = original_cords.reshape((-1,1,2))
+
+    return formated_cords
+
+
 def get_object_size(points):
     boundingbox_size = []
     if len(points) == 4:

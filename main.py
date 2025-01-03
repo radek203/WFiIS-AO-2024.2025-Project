@@ -3,7 +3,7 @@ import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk
 from config import config
-from paper_utils import get_largest_contour, get_approx_polygon, get_warped_perspective, get_object_size, get_measurments_real_unit
+from paper_utils import get_largest_contour, get_approx_polygon, get_warped_perspective, get_object_size, get_measurments_real_unit, get_original_coordinates
 
 def show_frame():
     # Read a frame
@@ -35,9 +35,16 @@ def show_frame():
                 if object_contour is not None:
                     approx_polygon, rect_object = get_approx_polygon(object_contour)
                     if rect_object is not None:
-                        cv2.drawContours(warped, [approx_polygon], -1, (0, 255, 0), 3)
-                        for point in approx_polygon:
-                            cv2.circle(warped, point[0], 10, (0, 0, 255), -1)
+
+                        # Calculating original coordinates for object corners
+                        # As parameters function gets an original an array of points and the original frame rect
+                        original_points = get_original_coordinates(approx_polygon,rect)
+                        cv2.drawContours(frame, [original_points], -1, (255, 0, 255), 3)
+                        for point in original_points:
+                            cv2.circle(frame, point[0], 15, (255, 100, 0),-1)
+
+                        # for point in approx_polygon:
+                        #     cv2.circle(warped, point[0], 10, (0, 0, 255), -1)
                         print("object size: {}".format(get_object_size(approx_polygon)))
                         object_size_x, object_size_y = get_measurments_real_unit(rect, approx_polygon, dropdown.get())
                         print(f"object real size: {object_size_x}, {object_size_y}")
