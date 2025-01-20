@@ -55,8 +55,8 @@ def show_frame():
                         long_edge_size, short_edge_size = get_measurments_real_unit(rect, approx_polygon, dropdown.get())
                         cv2.putText(frame, f'{long_edge_size:.0f}', tuple(long_edge_center.astype(int)), cv2.FONT_HERSHEY_SIMPLEX, 1, (44, 110, 19), 2)
                         cv2.circle(frame, tuple(long_edge_center.astype(int)), 5, (44, 110, 19), -1)
-                        cv2.putText(frame, f'{short_edge_size:.0f}', tuple(short_edge_center.astype(int)), cv2.FONT_HERSHEY_SIMPLEX, 1, (256, 44, 19), 2)
-                        cv2.circle(frame, tuple(short_edge_center.astype(int)), 5, (255, 70, 122), -1)
+                        cv2.putText(frame, f'{short_edge_size:.0f}', tuple(short_edge_center.astype(int)), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 44, 19), 2)
+                        cv2.circle(frame, tuple(short_edge_center.astype(int)), 5, (255, 44, 19), -1)
 
     frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     img = Image.fromarray(frame)
@@ -66,33 +66,35 @@ def show_frame():
     label.after(35, show_frame)
 
 
-# Initialize the camera (0 is usually the default camera) 
-camera = cv2.VideoCapture(config["camera"])
+if __name__ == "__main__":
 
-# Check if the camera opened successfully
-if not camera.isOpened():
-    print("Error: Could not access the camera.")
-else:
-    print("Camera opened successfully.")
+    # Initialize the camera (0 is usually the default camera) 
+    camera = cv2.VideoCapture(config["camera"])
 
-# Create Tkinter window
-root = tk.Tk()
-root.title("Mierzenie obiektów na kartce")
+    # Check if the camera opened successfully
+    if not camera.isOpened():
+        print("Error: Could not access the camera.")
+    else:
+        print("Camera opened successfully.")
 
-# Create label to display the frame
-label = tk.Label(root)
-label.pack()
+    # Create Tkinter window
+    root = tk.Tk()
+    root.title("Mierzenie obiektów na kartce")
 
-# Create dropdown menu
-options = ["A3", "A4", "A5"]
-selected_option = tk.StringVar()
-selected_option.set("A4") # Default option
+    # Create label to display the frame
+    label = tk.Label(root)
+    label.pack()
 
-dropdown = ttk.Combobox(root, textvariable=selected_option, values=options)
-dropdown.pack()
+    # Create dropdown menu
+    options = ["A3", "A4", "A5"]
+    selected_option = tk.StringVar()
+    selected_option.set("A4") # Default option
 
-# Start displaying frames
-show_frame()
+    dropdown = ttk.Combobox(root, textvariable=selected_option, values=options)
+    dropdown.pack()
 
-# Start Tkinter main loop
-root.mainloop()
+    # Start displaying frames
+    show_frame()
+
+    # Start Tkinter main loop
+    root.mainloop()
