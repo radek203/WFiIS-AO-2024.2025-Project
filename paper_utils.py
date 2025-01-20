@@ -135,7 +135,6 @@ def get_object_size(points):
 
 def get_papre_size_in_mm(paper_option):
     selected_value = paper_option
-    print(f"Selected paper size: {selected_value}")
     if selected_value == "A4":
         return 210, 297 
     elif selected_value == "A5":
@@ -152,17 +151,12 @@ def get_measurments_real_unit(rect, points, paper_option="A4"):
     paper_width_in_pixels= min(a,b)
     paper_height_in_pixels = max(a,b)
 
-    print("--------------------------------------------------------------------------")
-    print(f"paper w in px: {paper_width_in_pixels}, paper h in px: {paper_height_in_pixels}\n")
-
     paper_width_in_mm, paper_height_in_mm = get_papre_size_in_mm(paper_option)
 
-    print(f"paper w in mm: {paper_width_in_mm}, paper h in mm: {paper_height_in_mm}\n")
 
     scale_long_edge = paper_height_in_mm / paper_height_in_pixels
     scale_short_edge = paper_width_in_mm / paper_width_in_pixels
 
-    print(f"paper scale long: {scale_long_edge}, paper scale short: {scale_short_edge}\n")
 
     object_in_pixels = get_object_size(points)
 
@@ -175,7 +169,25 @@ def get_measurments_real_unit(rect, points, paper_option="A4"):
         object_width_in_mm = ((object_in_pixels[0][0] * scale_short_edge)**2 + (object_in_pixels[0][1] * scale_long_edge)**2)**0.5
         object_height_in_mm = ((object_in_pixels[1][0] * scale_short_edge)**2 + (object_in_pixels[1][1] * scale_long_edge)**2)**0.5
     
-    print(f"object w in px: {(object_in_pixels[0][0]**2 + object_in_pixels[0][1]**2)**0.5}, object h in px: {(object_in_pixels[1][0]**2 + object_in_pixels[1][1]**2)**0.5}\n")
-    print(f"object w in mm: {object_width_in_mm}, object h in mm: {object_height_in_mm}\n")
+    return max(object_width_in_mm, object_height_in_mm), min(object_width_in_mm, object_height_in_mm)
 
-    return object_width_in_mm, object_height_in_mm
+def get_edge_centers(original_points):
+    # Extract the points
+    points = original_points.reshape(-1, 2)
+    
+    # Calculate the distances between consecutive points
+    distances = [np.linalg.norm(points[i] - points[(i + 1) % 4]) for i in range(4)]
+    
+    # Identify the indices of the longer and shorter edges
+    if distances[0] > distances[1]:
+        long_edge_indices = [(0, 1), (2, 3)]
+        short_edge_indices = [(1, 2), (3, 0)]
+    else:
+        long_edge_indices = [(1, 2), (3, 0)]
+        short_edge_indices = [(0, 1), (2, 3)]
+    
+    # Calculate the centers of the longer and shorter edges
+    long_edge_center = np.mean([points[long_edge_indices[0][0]], points[long_edge_indices[0][1]]], axis=0)
+    short_edge_center = np.mean([points[short_edge_indices[0][0]], points[short_edge_indices[0][1]]], axis=0)
+    
+    return long_edge_center, short_edge_center

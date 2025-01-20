@@ -3,7 +3,7 @@ import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk
 from config import config
-from paper_utils import get_largest_contour, get_approx_polygon, get_warped_perspective, get_object_size, get_measurments_real_unit, get_original_coordinates
+from paper_utils import get_largest_contour, get_approx_polygon, get_warped_perspective, get_object_size, get_measurments_real_unit, get_original_coordinates, get_edge_centers
 
 def show_frame():
     # Read a frame
@@ -41,13 +41,18 @@ def show_frame():
                         original_points = get_original_coordinates(approx_polygon,rect)
                         cv2.drawContours(frame, [original_points], -1, (255, 0, 255), 3)
                         for point in original_points:
-                            cv2.circle(frame, point[0], 15, (255, 100, 0),-1)
+                            cv2.circle(frame, point[0], 5, (255, 100, 0),-1)
 
                         # for point in approx_polygon:
                         #     cv2.circle(warped, point[0], 10, (0, 0, 255), -1)
-                        print("object size: {}".format(get_object_size(approx_polygon)))
-                        object_size_x, object_size_y = get_measurments_real_unit(rect, approx_polygon, dropdown.get())
-                        print(f"object real size: {object_size_x}, {object_size_y}")
+                        #print("object size: {}".format(get_object_size(approx_polygon)))
+                        long_edge_center, short_edge_center = get_edge_centers(original_points)
+                        long_edge_size, short_edge_size = get_measurments_real_unit(rect, approx_polygon, dropdown.get())
+                        cv2.putText(frame, f'{long_edge_size:.2f}', tuple(long_edge_center.astype(int)), cv2.FONT_HERSHEY_SIMPLEX, 1, (7, 48, 2), 2)
+                        cv2.circle(frame, tuple(long_edge_center.astype(int)), 2, (7, 48, 2), -1)
+                        cv2.putText(frame, f'{short_edge_size:.2f}', tuple(short_edge_center.astype(int)), cv2.FONT_HERSHEY_SIMPLEX, 1, (6, 11, 87), 2)
+                        cv2.circle(frame, tuple(short_edge_center.astype(int)), 2, (6, 11, 87), -1)
+                        #print(f"object real size: {object_size_x}, {object_size_y}")
 
     frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     img = Image.fromarray(frame)
