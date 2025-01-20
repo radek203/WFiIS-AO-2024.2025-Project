@@ -187,7 +187,11 @@ def get_edge_centers(original_points):
         short_edge_indices = [(0, 1), (2, 3)]
     
     # Calculate the centers of the longer and shorter edges
-    long_edge_center = np.mean([points[long_edge_indices[0][0]], points[long_edge_indices[0][1]]], axis=0)
-    short_edge_center = np.mean([points[short_edge_indices[0][0]], points[short_edge_indices[0][1]]], axis=0)
+    long_edge_centers = [np.mean([points[long_edge_indices[i][0]], points[long_edge_indices[i][1]]], axis=0) for i in range(2)]
+    short_edge_centers = [np.mean([points[short_edge_indices[i][0]], points[short_edge_indices[i][1]]], axis=0) for i in range(2)]
+    
+    # Select the lower long edge center and the left short edge center
+    long_edge_center = max(long_edge_centers, key=lambda x: x[1])
+    short_edge_center = min(short_edge_centers, key=lambda x: x[0])
     
     return long_edge_center, short_edge_center

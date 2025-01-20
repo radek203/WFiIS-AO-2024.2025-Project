@@ -43,23 +43,19 @@ def show_frame():
                         for point in original_points:
                             cv2.circle(frame, point[0], 5, (255, 100, 0),-1)
 
-                        # for point in approx_polygon:
-                        #     cv2.circle(warped, point[0], 10, (0, 0, 255), -1)
-                        #print("object size: {}".format(get_object_size(approx_polygon)))
                         long_edge_center, short_edge_center = get_edge_centers(original_points)
                         long_edge_size, short_edge_size = get_measurments_real_unit(rect, approx_polygon, dropdown.get())
-                        cv2.putText(frame, f'{long_edge_size:.2f}', tuple(long_edge_center.astype(int)), cv2.FONT_HERSHEY_SIMPLEX, 1, (7, 48, 2), 2)
-                        cv2.circle(frame, tuple(long_edge_center.astype(int)), 2, (7, 48, 2), -1)
-                        cv2.putText(frame, f'{short_edge_size:.2f}', tuple(short_edge_center.astype(int)), cv2.FONT_HERSHEY_SIMPLEX, 1, (6, 11, 87), 2)
-                        cv2.circle(frame, tuple(short_edge_center.astype(int)), 2, (6, 11, 87), -1)
-                        #print(f"object real size: {object_size_x}, {object_size_y}")
+                        cv2.putText(frame, f'{long_edge_size:.0f}', tuple(long_edge_center.astype(int)), cv2.FONT_HERSHEY_SIMPLEX, 1, (44, 110, 19), 2)
+                        cv2.circle(frame, tuple(long_edge_center.astype(int)), 5, (44, 110, 19), -1)
+                        cv2.putText(frame, f'{short_edge_size:.0f}', tuple(short_edge_center.astype(int)), cv2.FONT_HERSHEY_SIMPLEX, 1, (256, 70, 122), 2)
+                        cv2.circle(frame, tuple(short_edge_center.astype(int)), 5, (255, 70, 122), -1)
 
     frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     img = Image.fromarray(frame)
     imgtk = ImageTk.PhotoImage(image=img)
     label.imgtk = imgtk
     label.configure(image=imgtk)
-    label.after(10, show_frame)
+    label.after(35, show_frame)
 
 
 # Initialize the camera (0 is usually the default camera) 
