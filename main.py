@@ -36,12 +36,12 @@ def show_frame():
             object_contours = get_largest_contour(warped, False)
             for object_contour in object_contours:
                 if object_contour is not None:
-                    approx_polygon, rect_object = get_approx_polygon(object_contour)
+                    approx_polygon, rect_object = get_approx_polygon(get_original_coordinates(object_contour,rect))
                     if rect_object is not None:
 
                         # Calculating original coordinates for object corners
                         # As parameters function gets an original an array of points and the original frame rect
-                        original_points = get_original_coordinates(approx_polygon,rect)
+                        original_points = approx_polygon
                         cv2.drawContours(frame, [original_points], -1, (255, 0, 255), 3)
                         for point in original_points:
                             cv2.circle(frame, point[0], 5, (255, 100, 0),-1)
