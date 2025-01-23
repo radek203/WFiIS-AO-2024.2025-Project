@@ -146,8 +146,10 @@ def get_papre_size_in_mm(paper_option):
         return None, None
 
 def get_measurments_real_unit(rect, points, paper_option="A4"):
-    a=int(max(np.linalg.norm(rect[2] - rect[3]), np.linalg.norm(rect[1] - rect[0])))
-    b=int(max(np.linalg.norm(rect[1] - rect[2]), np.linalg.norm(rect[0] - rect[3])))
+    paper_in_pixels = get_object_size(rect)
+    a = ((paper_in_pixels[0][0])**2 + (paper_in_pixels[0][1])**2)**0.5
+    b = ((paper_in_pixels[1][0])**2 + (paper_in_pixels[1][1])**2)**0.5
+
     paper_width_in_pixels= min(a,b)
     paper_height_in_pixels = max(a,b)
 
@@ -162,7 +164,7 @@ def get_measurments_real_unit(rect, points, paper_option="A4"):
 
     object_width_in_mm = object_height_in_mm = 0
     
-    if a>b:
+    if b>a:
         object_width_in_mm = ((object_in_pixels[0][0] * scale_long_edge)**2 + (object_in_pixels[0][1] * scale_short_edge)**2)**0.5
         object_height_in_mm = ((object_in_pixels[1][0] * scale_long_edge)**2 + (object_in_pixels[1][1] * scale_short_edge)**2)**0.5
     else:

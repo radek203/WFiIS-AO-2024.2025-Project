@@ -28,9 +28,6 @@ def show_frame():
             cv2.drawContours(frame, [approx], -1, (0, 255, 0), 3)
             for point in approx:
                 cv2.circle(frame, point[0], 10, (0, 0, 255), -1)
-            #debug
-            for i, point in enumerate(approx):
-                cv2.putText(frame, str(i), tuple(point[0]), cv2.FONT_HERSHEY_SIMPLEX, 1, (1, 10, 11), 2)
                 
             # Detect object on warped perspective
             object_contours = get_largest_contour(warped, False)
@@ -46,13 +43,9 @@ def show_frame():
                         for point in original_points:
                             cv2.circle(frame, point[0], 5, (255, 100, 0),-1)
 
-                        #debug
-                        for i, point in enumerate(original_points):
-                            cv2.putText(frame, str(i), tuple(point[0]), cv2.FONT_HERSHEY_SIMPLEX, 1, (1, 10, 11), 2)
-
 
                         long_edge_center, short_edge_center = get_edge_centers(original_points)
-                        long_edge_size, short_edge_size = get_measurments_real_unit(rect, approx_polygon, dropdown.get())
+                        long_edge_size, short_edge_size = get_measurments_real_unit(approx, approx_polygon, dropdown.get())
                         cv2.putText(frame, f'{long_edge_size:.0f}', tuple(long_edge_center.astype(int)), cv2.FONT_HERSHEY_SIMPLEX, 1, (44, 110, 19), 2)
                         cv2.circle(frame, tuple(long_edge_center.astype(int)), 5, (44, 110, 19), -1)
                         cv2.putText(frame, f'{short_edge_size:.0f}', tuple(short_edge_center.astype(int)), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 44, 19), 2)
